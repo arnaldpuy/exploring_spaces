@@ -1,0 +1,351 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+  11pt,
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage[font=footnotesize]{caption}
+\usepackage{dirtytalk}
+\usepackage{booktabs}
+\usepackage{tabulary}
+\usepackage{enumitem}
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage{tikz}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Exploring multi-dimensional spaces},
+  pdfauthor={Arnald Puy},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Exploring multi-dimensional spaces}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{R code}
+\author{Arnald Puy}
+\date{}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\newpage
+
+\hypertarget{preliminary}{%
+\section{Preliminary}\label{preliminary}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# PRELIMINARY \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\CommentTok{\# Function to read in all required packages in one go:}
+\NormalTok{load\_packages }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(x) \{}
+  \ControlFlowTok{for}\NormalTok{(i }\ControlFlowTok{in}\NormalTok{ x) \{}
+    \ControlFlowTok{if}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{require}\NormalTok{(i, }\AttributeTok{character.only =} \ConstantTok{TRUE}\NormalTok{)) \{}
+      \FunctionTok{install.packages}\NormalTok{(i, }\AttributeTok{dependencies =} \ConstantTok{TRUE}\NormalTok{)}
+      \FunctionTok{library}\NormalTok{(i, }\AttributeTok{character.only =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{    \}}
+\NormalTok{  \}}
+\NormalTok{\}}
+
+\CommentTok{\# Define theme for plots}
+\NormalTok{theme\_AP }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{() \{}
+  \FunctionTok{theme\_bw}\NormalTok{() }\SpecialCharTok{+}
+    \FunctionTok{theme}\NormalTok{(}\AttributeTok{panel.grid.major =} \FunctionTok{element\_blank}\NormalTok{(),}
+          \AttributeTok{panel.grid.minor =} \FunctionTok{element\_blank}\NormalTok{(),}
+          \AttributeTok{legend.background =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{fill =} \StringTok{"transparent"}\NormalTok{,}
+                                           \AttributeTok{color =} \ConstantTok{NA}\NormalTok{),}
+          \AttributeTok{legend.margin=}\FunctionTok{margin}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+          \AttributeTok{legend.box.margin=}\FunctionTok{margin}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{7}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{7}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{7}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{7}\NormalTok{),}
+          \AttributeTok{legend.key =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{fill =} \StringTok{"transparent"}\NormalTok{,}
+                                    \AttributeTok{color =} \ConstantTok{NA}\NormalTok{),}
+          \AttributeTok{legend.title =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{9}\NormalTok{),}
+          \AttributeTok{legend.text =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{8}\NormalTok{),}
+          \AttributeTok{strip.background =} \FunctionTok{element\_rect}\NormalTok{(}\AttributeTok{fill =} \StringTok{"white"}\NormalTok{),}
+          \AttributeTok{axis.title.x =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{9}\NormalTok{),}
+          \AttributeTok{axis.title.y =} \FunctionTok{element\_text}\NormalTok{(}\AttributeTok{size =} \DecValTok{9}\NormalTok{))}
+\NormalTok{\}}
+
+\CommentTok{\# Load the packages}
+\FunctionTok{load\_packages}\NormalTok{(}\FunctionTok{c}\NormalTok{(}\StringTok{"sensobol"}\NormalTok{, }\StringTok{"data.table"}\NormalTok{, }\StringTok{"tidyverse"}\NormalTok{, }\StringTok{"parallel"}\NormalTok{,}
+               \StringTok{"scales"}\NormalTok{, }\StringTok{"doParallel"}\NormalTok{, }\StringTok{"benchmarkme"}\NormalTok{,}
+               \StringTok{"cowplot"}\NormalTok{, }\StringTok{"wesanderson"}\NormalTok{, }\StringTok{"logitnorm"}\NormalTok{))}
+
+
+\CommentTok{\# Set checkpoint}
+\FunctionTok{dir.create}\NormalTok{(}\StringTok{".checkpoint"}\NormalTok{)}
+
+\FunctionTok{library}\NormalTok{(}\StringTok{"checkpoint"}\NormalTok{)}
+
+\FunctionTok{checkpoint}\NormalTok{(}\StringTok{"2022{-}11{-}21"}\NormalTok{, }
+           \AttributeTok{R.version =}\StringTok{"4.2.1"}\NormalTok{, }
+           \AttributeTok{checkpointLocation =} \FunctionTok{getwd}\NormalTok{())}
+\end{Highlighting}
+\end{Shaded}
+
+\newpage
+
+\hypertarget{define-functions}{%
+\section{Define functions}\label{define-functions}}
+
+\hypertarget{random-distributions}{%
+\subsection{Random distributions}\label{random-distributions}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# FUNCTION TO SAMPLE DISTRIBUTIONS \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\CommentTok{\# Define function to random sample distributions}
+\NormalTok{sample\_distributions\_PDF }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  
+  \StringTok{"uniform"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{dunif}\NormalTok{(x, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+  \StringTok{"normal"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{dnorm}\NormalTok{(x, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.15}\NormalTok{),}
+  \StringTok{"beta"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{dbeta}\NormalTok{(x, }\DecValTok{8}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+  \StringTok{"beta2"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{dbeta}\NormalTok{(x, }\DecValTok{2}\NormalTok{, }\DecValTok{8}\NormalTok{),}
+  \StringTok{"beta3"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{dbeta}\NormalTok{(x, }\DecValTok{2}\NormalTok{, }\FloatTok{0.8}\NormalTok{),}
+  \StringTok{"beta4"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{dbeta}\NormalTok{(x, }\FloatTok{0.8}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+  \StringTok{"logitnormal"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{dlogitnorm}\NormalTok{(x, }\DecValTok{0}\NormalTok{, }\FloatTok{3.16}\NormalTok{)}
+\NormalTok{)}
+
+\CommentTok{\# Quantile function}
+\NormalTok{sample\_distributions }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+  
+  \StringTok{"uniform"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qunif}\NormalTok{(x, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{),}
+  \StringTok{"normal"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qnorm}\NormalTok{(x, }\DecValTok{0}\NormalTok{, }\FloatTok{0.3}\NormalTok{),}
+  \StringTok{"beta"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qbeta}\NormalTok{(x, }\DecValTok{8}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+  \StringTok{"beta2"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qbeta}\NormalTok{(x, }\DecValTok{2}\NormalTok{, }\DecValTok{8}\NormalTok{),}
+  \StringTok{"beta3"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qbeta}\NormalTok{(x, }\DecValTok{2}\NormalTok{, }\FloatTok{0.8}\NormalTok{),}
+  \StringTok{"beta4"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qbeta}\NormalTok{(x, }\FloatTok{0.8}\NormalTok{, }\DecValTok{2}\NormalTok{),}
+  \StringTok{"logitnormal"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qlogitnorm}\NormalTok{(x, }\DecValTok{0}\NormalTok{, }\FloatTok{3.16}\NormalTok{)}
+\NormalTok{)}
+
+\NormalTok{random\_distributions }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(mat, phi, epsilon) \{}
+\NormalTok{  names\_ff }\OtherTok{\textless{}{-}} \FunctionTok{names}\NormalTok{(sample\_distributions)}
+  \ControlFlowTok{if}\NormalTok{ (}\SpecialCharTok{!}\NormalTok{phi }\SpecialCharTok{==} \FunctionTok{length}\NormalTok{(names\_ff) }\SpecialCharTok{+} \DecValTok{1}\NormalTok{) \{}
+\NormalTok{    out }\OtherTok{\textless{}{-}}\NormalTok{ sample\_distributions[[names\_ff[phi]]](mat)}
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+    \FunctionTok{set.seed}\NormalTok{(epsilon)}
+\NormalTok{    temp }\OtherTok{\textless{}{-}} \FunctionTok{sample}\NormalTok{(names\_ff, }\FunctionTok{ncol}\NormalTok{(mat), }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{    out }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(}\FunctionTok{seq\_along}\NormalTok{(temp), }\ControlFlowTok{function}\NormalTok{(x) sample\_distributions[[temp[x]]](mat[, x]))}
+\NormalTok{  \}}
+  \FunctionTok{return}\NormalTok{(out)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{metafunction}{%
+\subsection{Metafunction}\label{metafunction}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# METAFUNCTION \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\NormalTok{meta\_fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, epsilon, n) \{}
+
+  \CommentTok{\# Define list of functions included in metafunction}
+\NormalTok{  function\_list }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
+    \AttributeTok{Linear =} \ControlFlowTok{function}\NormalTok{(x) x,}
+    \AttributeTok{Quadratic =} \ControlFlowTok{function}\NormalTok{(x) x }\SpecialCharTok{\^{}} \DecValTok{2}\NormalTok{,}
+    \AttributeTok{Cubic =} \ControlFlowTok{function}\NormalTok{(x) x }\SpecialCharTok{\^{}} \DecValTok{3}\NormalTok{,}
+    \AttributeTok{Exponential =} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{exp}\NormalTok{(}\DecValTok{1}\NormalTok{) }\SpecialCharTok{\^{}}\NormalTok{ x }\SpecialCharTok{/}\NormalTok{ (}\FunctionTok{exp}\NormalTok{(}\DecValTok{1}\NormalTok{) }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{),}
+    \AttributeTok{Periodic =} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{sin}\NormalTok{(}\DecValTok{2} \SpecialCharTok{*}\NormalTok{ pi }\SpecialCharTok{*}\NormalTok{ x) }\SpecialCharTok{/} \DecValTok{2}\NormalTok{,}
+    \AttributeTok{Discontinuous =} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{ifelse}\NormalTok{(x }\SpecialCharTok{\textgreater{}} \FloatTok{0.5}\NormalTok{, }\DecValTok{1}\NormalTok{, }\DecValTok{0}\NormalTok{),}
+    \AttributeTok{Non.monotonic =} \ControlFlowTok{function}\NormalTok{(x) }\DecValTok{4} \SpecialCharTok{*}\NormalTok{ (x }\SpecialCharTok{{-}} \FloatTok{0.5}\NormalTok{) }\SpecialCharTok{\^{}} \DecValTok{2}\NormalTok{,}
+    \AttributeTok{Inverse =} \ControlFlowTok{function}\NormalTok{(x) (}\DecValTok{10} \SpecialCharTok{{-}} \DecValTok{1} \SpecialCharTok{/} \FloatTok{1.1}\NormalTok{) }\SpecialCharTok{\^{}} \SpecialCharTok{{-}}\DecValTok{1} \SpecialCharTok{*}\NormalTok{ (x }\SpecialCharTok{+} \FloatTok{0.1}\NormalTok{) }\SpecialCharTok{\^{}} \SpecialCharTok{{-}} \DecValTok{1}\NormalTok{,}
+    \AttributeTok{No.effect =} \ControlFlowTok{function}\NormalTok{(x) x }\SpecialCharTok{*} \DecValTok{0}\NormalTok{,}
+    \AttributeTok{Trigonometric =} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{cos}\NormalTok{(x),}
+    \AttributeTok{Piecewise.large =} \ControlFlowTok{function}\NormalTok{(x) ((}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{\^{}} \FunctionTok{as.integer}\NormalTok{(}\DecValTok{4} \SpecialCharTok{*}\NormalTok{ x) }\SpecialCharTok{*}\NormalTok{ (}\FloatTok{0.125} \SpecialCharTok{{-}}\NormalTok{ (x }\SpecialCharTok{\%\%} \FloatTok{0.25}\NormalTok{)) }\SpecialCharTok{+} \FloatTok{0.125}\NormalTok{),}
+    \AttributeTok{Piecewise.small =} \ControlFlowTok{function}\NormalTok{(x) ((}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{) }\SpecialCharTok{\^{}} \FunctionTok{as.integer}\NormalTok{(}\DecValTok{32} \SpecialCharTok{*}\NormalTok{ x) }\SpecialCharTok{*}\NormalTok{ (}\FloatTok{0.03125} \SpecialCharTok{{-}} \DecValTok{2} \SpecialCharTok{*}\NormalTok{ (x }\SpecialCharTok{\%\%} \FloatTok{0.03125}\NormalTok{)) }\SpecialCharTok{+} \FloatTok{0.03125}\NormalTok{) }\SpecialCharTok{/} \DecValTok{2}\NormalTok{,}
+    \AttributeTok{Oscillation =} \ControlFlowTok{function}\NormalTok{(x) x }\SpecialCharTok{\^{}} \DecValTok{2} \SpecialCharTok{{-}} \FloatTok{0.2} \SpecialCharTok{*} \FunctionTok{cos}\NormalTok{(}\DecValTok{7} \SpecialCharTok{*}\NormalTok{ pi }\SpecialCharTok{*}\NormalTok{ x)}
+\NormalTok{  )}
+
+  \CommentTok{\# Sample list of functions}
+  \FunctionTok{set.seed}\NormalTok{(epsilon)}
+\NormalTok{  all\_functions }\OtherTok{\textless{}{-}} \FunctionTok{sample}\NormalTok{(}\FunctionTok{names}\NormalTok{(function\_list), }\FunctionTok{ncol}\NormalTok{(data), }\AttributeTok{replace =} \ConstantTok{TRUE}\NormalTok{)}
+
+  \CommentTok{\# Compute model output first order effects}
+\NormalTok{  mat.y }\OtherTok{\textless{}{-}} \FunctionTok{sapply}\NormalTok{(}\FunctionTok{seq\_along}\NormalTok{(all\_functions), }\ControlFlowTok{function}\NormalTok{(x)}
+\NormalTok{    function\_list[[all\_functions[x]]](data[, x]))}
+
+  \CommentTok{\# Compute first{-}order effects}
+\NormalTok{  y1 }\OtherTok{\textless{}{-}}\NormalTok{ Rfast}\SpecialCharTok{::}\FunctionTok{rowsums}\NormalTok{(mat.y)}
+
+  \ControlFlowTok{if}\NormalTok{ (n }\SpecialCharTok{\textgreater{}=} \DecValTok{2}\NormalTok{) \{ }\CommentTok{\# Activate interactions}
+
+    \CommentTok{\# Define matrix with all possible interactions up to the n{-}th order}
+\NormalTok{    interactions }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(}\DecValTok{2}\SpecialCharTok{:}\NormalTok{n, }\ControlFlowTok{function}\NormalTok{(x) RcppAlgos}\SpecialCharTok{::}\FunctionTok{comboGeneral}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\NormalTok{n, x, }\AttributeTok{nThreads =} \DecValTok{4}\NormalTok{))}
+
+\NormalTok{    out }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{length}\NormalTok{(interactions), }\ControlFlowTok{function}\NormalTok{(x) \{}
+      \FunctionTok{lapply}\NormalTok{(}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(interactions[[x]]), }\ControlFlowTok{function}\NormalTok{(y) \{}
+\NormalTok{        Rfast}\SpecialCharTok{::}\FunctionTok{rowprods}\NormalTok{(mat.y[, interactions[[x]][y, ]])}
+\NormalTok{      \})}
+\NormalTok{    \})}
+
+\NormalTok{    y2 }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(out, }\ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{do.call}\NormalTok{(cbind, x)) }\SpecialCharTok{\%\textgreater{}\%}
+      \FunctionTok{do.call}\NormalTok{(cbind, .) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{      Rfast}\SpecialCharTok{::}\FunctionTok{rowsums}\NormalTok{(.)}
+
+\NormalTok{  \} }\ControlFlowTok{else}\NormalTok{ \{}
+
+\NormalTok{    y2 }\OtherTok{\textless{}{-}} \DecValTok{0}
+\NormalTok{  \}}
+
+\NormalTok{  y }\OtherTok{\textless{}{-}}\NormalTok{ y1 }\SpecialCharTok{+}\NormalTok{ y2}
+
+  \FunctionTok{return}\NormalTok{(y)}
+\NormalTok{\}}
+
+\CommentTok{\# Add stopping rule for precaution {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\NormalTok{model }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(data, epsilon, n) \{}
+
+\NormalTok{  k }\OtherTok{\textless{}{-}} \FunctionTok{ncol}\NormalTok{(data)}
+
+  \ControlFlowTok{if}\NormalTok{ (n }\SpecialCharTok{\textgreater{}}\NormalTok{ k) \{}
+
+    \FunctionTok{stop}\NormalTok{(}\StringTok{"level\_interactions should be smaller or equal than }\SpecialCharTok{\textbackslash{}n}
+\StringTok{         the number of parameters"}\NormalTok{)}
+\NormalTok{  \}}
+
+\NormalTok{  y }\OtherTok{\textless{}{-}} \FunctionTok{meta\_fun}\NormalTok{(}\AttributeTok{data =}\NormalTok{ data, }\AttributeTok{epsilon =}\NormalTok{ epsilon, }\AttributeTok{n =}\NormalTok{ n)}
+
+  \FunctionTok{return}\NormalTok{(y)}
+\NormalTok{\}}
+
+\CommentTok{\# Finalize metafunction {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\NormalTok{model\_fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(k, epsilon, phi, model.runs, n, type, matrices) \{}
+
+\NormalTok{  params }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"X"}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{k, }\AttributeTok{sep =} \StringTok{""}\NormalTok{)}
+  \FunctionTok{set.seed}\NormalTok{(epsilon)}
+\NormalTok{  mat }\OtherTok{\textless{}{-}} \FunctionTok{sobol\_matrices}\NormalTok{(}\AttributeTok{N =}\NormalTok{ model.runs, }\AttributeTok{params =}\NormalTok{ params, }\AttributeTok{type =}\NormalTok{ type,}
+                        \AttributeTok{matrices =}\NormalTok{ matrices)}
+\NormalTok{  mat }\OtherTok{\textless{}{-}} \FunctionTok{random\_distributions}\NormalTok{(}\AttributeTok{mat =}\NormalTok{ mat, }\AttributeTok{phi =}\NormalTok{ phi, }\AttributeTok{epsilon =}\NormalTok{ epsilon)}
+\NormalTok{  y }\OtherTok{\textless{}{-}} \FunctionTok{model}\NormalTok{(}\AttributeTok{data =}\NormalTok{ mat, }\AttributeTok{epsilon =}\NormalTok{ epsilon, }\AttributeTok{n =}\NormalTok{ n)}
+\NormalTok{  indices }\OtherTok{\textless{}{-}} \FunctionTok{sobol\_indices}\NormalTok{(}\AttributeTok{Y =}\NormalTok{ y, }\AttributeTok{N =}\NormalTok{ model.runs, }\AttributeTok{params =}\NormalTok{ params, }\AttributeTok{matrices =}\NormalTok{ matrices,}
+                           \AttributeTok{first =} \StringTok{"azzini"}\NormalTok{, }\AttributeTok{total =} \StringTok{"azzini"}\NormalTok{)}
+\NormalTok{  model.output }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(y[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{model.runs])}
+
+\NormalTok{  output }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(model.output, indices)}
+  \FunctionTok{names}\NormalTok{(output) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"output"}\NormalTok{, }\StringTok{"indices"}\NormalTok{)}
+
+  \FunctionTok{return}\NormalTok{(output)}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{settings}{%
+\section{Settings}\label{settings}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# DEFINE SETTINGS OF THE ANALYSIS \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\NormalTok{params }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"k"}\NormalTok{, }\StringTok{"epsilon"}\NormalTok{, }\StringTok{"n"}\NormalTok{, }\StringTok{"phi"}\NormalTok{)}
+\NormalTok{N }\OtherTok{\textless{}{-}} \DecValTok{2}\SpecialCharTok{\^{}}\DecValTok{10}
+\NormalTok{matrices }\OtherTok{\textless{}{-}} \StringTok{"A"}
+\NormalTok{max.k }\OtherTok{\textless{}{-}} \DecValTok{10} \CommentTok{\# maximum number of explored inputs}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}
