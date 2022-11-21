@@ -1,4 +1,9 @@
-.Rproj.user
-.Rhistory
-.RData
-.Ruserdata
+# Ignore everything -----
+/*
+
+# But not these files...
+!code_qmc.pdf
+!code_qmc.R
+!code_qmc.Rmd
+
+!README.md
