@@ -108,7 +108,6 @@ sample_distributions_PDF <- list(
 
 # Quantile function
 sample_distributions <- list(
-  
   "uniform" = function(x) qunif(x, -1, 1),
   "normal" = function(x) qnorm(x, 0, 0.3),
   "beta" = function(x) qbeta(x, 8, 2),
@@ -210,7 +209,8 @@ model <- function(data, epsilon, n) {
 }
 
 # Finalize metafunction --------------------------------
-model_fun <- function(k, epsilon, phi, model.runs, n, type, matrices) {
+model_fun <- function(k, epsilon, phi, model.runs, n, type, matrices, 
+                      first, total) {
 
   params <- paste("X", 1:k, sep = "")
   set.seed(epsilon)
@@ -219,7 +219,7 @@ model_fun <- function(k, epsilon, phi, model.runs, n, type, matrices) {
   mat <- random_distributions(mat = mat, phi = phi, epsilon = epsilon)
   y <- model(data = mat, epsilon = epsilon, n = n)
   indices <- sobol_indices(Y = y, N = model.runs, params = params, matrices = matrices,
-                           first = "azzini", total = "azzini")
+                           first = first, total = total)
   model.output <- mean(y[1:model.runs])
 
   output <- list(model.output, indices)
@@ -229,7 +229,8 @@ model_fun <- function(k, epsilon, phi, model.runs, n, type, matrices) {
 }
 ```
 
-# Settings
+# Analysis
+## Settings
 
 ```{r settings}
 
@@ -239,4 +240,205 @@ params <- c("k", "epsilon", "n", "phi")
 N <- 2^10
 matrices <- "A"
 max.k <- 10 # maximum number of explored inputs
+
+# Define an increasing sample size --------------
+exponents <- 7:14
+sample.sizes <- 2^exponents
+```
+
+## Sample matrix
+
+```{r sample_matrix, dependson=c("settings", "random_distributions", "metafunction")}
+
+# DEFINE SAMPLE MATRIX ########################################################
+
+# Creation of sample matrix ---------------------
+mat <- sobol_matrices(N = N, params = params, matrices = matrices)
+
+# Transformation to appropriate distributions ---
+mat[, "k"] <- floor(mat[, "k"] * (max.k - 2 + 1) + 2)
+mat[, "epsilon"] <- floor(mat[, "epsilon"] * (N - 1 + 1) + 1)
+mat[, "phi"] <- floor(mat[, "phi"] * ((length(sample_distributions) + 1) - 1 + 1) + 1)
+mat[, "n"] <- floor(mat[, "n"] * (max.k - 1 + 1) + 1)
+
+# Constrain n as a function of k
+mat[, "n"] <- ifelse(mat[, "n"] > mat[, "k"], mat[, "k"], mat[, "n"])
+
+# Replicate the sample matrix for each sample size
+n.times <- length(sample.sizes)
+mat <- matrix(rep(t(mat), n.times), ncol = ncol(mat), byrow = TRUE)
+model.runs <- rep(sample.sizes, each = N)
+
+mat <- cbind(mat, model.runs)
+colnames(mat) <- c(params, "model.runs")
+mat <- data.table(mat)
+sampling.methods <- c("R", "QRN", "LHS")
+
+# Replicate matrix for each sampling method -----
+final.mat <- mat[rep(mat[, .I], length(sampling.methods))]
+final.mat <- final.mat[, sample.method:= rep(sampling.methods, each = N * n.times)]
+```
+
+## Simulations
+
+```{r simulations, dependson="sample_matrix"}
+
+# RUN SIMULATIONS #############################################################
+
+# Define parallel computing ---------------------
+matrices <- c("A", "B", "AB", "BA")
+n_cores <- detectCores() * 0.75
+cl <- makeCluster(n_cores)
+registerDoParallel(cl)
+
+# Compute ---------------------------------------
+y <- foreach(i=1:nrow(final.mat),
+             .packages = c("Rfast", "sensobol", "dplyr", "RcppAlgos",
+                           "logitnorm")) %dopar%
+  {
+    model_fun(k = final.mat[[i, "k"]],
+              epsilon = final.mat[[i, "epsilon"]],
+              n = final.mat[[i, "n"]],
+              phi = final.mat[[i, "phi"]],
+              model.runs = final.mat[[i, "model.runs"]],
+              type = final.mat[[i, "sample.method"]],
+              matrices = matrices, 
+              first = "azzini", 
+              total = "azzini")
+  }
+
+# Stop parallel cluster -------------------------
+stopCluster(cl)
+```
+
+## Arrange results
+
+```{r arrange, dependson="simulations"}
+
+# ARRANGE RESULTS ##############################################################
+
+dt.output <- do.call("c", lapply(y, function(x) x$output))
+dt.indices <- lapply(y, function(x) x$indices)
+sum.si <- do.call("c", lapply(dt.indices, function(x) x$si.sum))
+mean.dimension <- lapply(dt.indices, function(x) x$results %>%
+                           .[sensitivity == "Ti"] %>%
+                           .[, sum(original)]) %>%
+  do.call("c", .)
+kt <- lapply(dt.indices, function(x) x$results %>%
+               .[sensitivity == "Ti"] %>%
+               .[original > 0.05] %>%
+               nrow(.)) %>%
+  do.call("c", .)
+
+dt.dimensions <- cbind(final.mat, sum.si, kt, mean.dimension)
+dt.largest.sample <- dt.dimensions[model.runs == sample.sizes[length(sample.sizes)]]
+fwrite(dt.largest.sample, "dt.largest.sample.csv")
+
+# ---------------------
+
+# Merge output with sample matrix ---------------
+
+dt <- cbind(final.mat, dt.output)
+dt.benchmark <- dt[model.runs == sample.sizes[length(sample.sizes)]]
+
+dt.tmp <- split(dt, dt$model.runs) %>%
+  lapply(., function(x) merge(x, dt.benchmark, by = c("k", "epsilon",
+                                                      "sample.method", "n"))) %>%
+  rbindlist(., idcol = "sample.size") %>%
+  setnames(., c("dt.output.y", "dt.output.x"), c("y", "y.highest")) %>%
+  .[, `:=` (model.runs.x = NULL, model.runs.y = NULL)] %>%
+  .[, .(RMSE = sqrt(mean((y.highest - y)^2))), .(sample.size, sample.method)]
+
+fwrite(dt.tmp, "dt.tmp.csv")
+```
+
+```{r check_negative, dependson="arrange"}
+
+dt.largest.sample[, .(summary = sum.si < 0)] %>%
+  .[, .N, summary]
+
+```
+
+## Figures
+
+```{r plot_results, warning=FALSE, dependson="arrange"}
+
+# PLOT #########################################################################
+
+plot.convergence <- dt.tmp %>%
+  .[, sample.size:= as.numeric(sample.size)] %>%
+  ggplot(., aes(sample.size, RMSE, color = sample.method, group = sample.method)) +
+  geom_line() +
+  scale_x_log10() +
+  theme_AP() +
+  labs(x = "Nº of model runs", y = "RMSE") +
+  scale_color_discrete(name = "Sampling method") +
+  theme(legend.position = c(0.7, 0.7))
+
+plot.convergence
+
+# Plot distribution of functions based on sum S_i
+plot.histogram <- dt.largest.sample %>%
+  ggplot(., aes(sum.si)) +
+  geom_histogram(fill = "white", color = "black") +
+  theme_AP() +
+  scale_x_continuous(limits = c(0, 1)) +
+  labs(x = "$\\sum_{i=1}^{k} S_i$",  y = "Counts") +
+  theme(legend.position = c(0.35, 0.7))
+
+plot.histogram
+
+# Plot sum of S_i against k and colored by k_t
+plot.scatter <- dt.largest.sample %>%
+  ggplot(., aes(sum.si, kt, color = k)) +
+  geom_point(size = 0.7) +
+  scale_color_gradient(low = "red", high = "green",
+                       name = "$k$") +
+  theme_AP() +
+  scale_x_continuous(limits = c(0, 1)) +
+  theme(legend.position = "none") +
+  labs(x = "$\\sum_{i=1}^{k} S_i$", y = "$k_t$")
+
+legend <- get_legend(plot.scatter + theme(legend.position = "top"))
+
+plot.scatter
+
+plot.mean.dimensions <- dt.largest.sample %>%
+  ggplot(., aes(mean.dimension, sum.si)) +
+  geom_point(size = 0.6, alpha = 0.5) +
+  labs(x = "$\\sum_{i=1}^k T_i$", y = "$\\sum_{i=1}^k S_i$") +
+  theme_AP()
+
+plot.mean.dimensions
+```
+
+```{r merge_plots, dependson="plot_results", fig.height=2.5, fig.width=6, warning=FALSE}
+
+# MERGE FIGURES ################################################################
+
+bottom.plots <- plot_grid(plot.histogram, plot.scatter, plot.mean.dimensions, 
+                          ncol = 3, labels = "auto")
+
+plot_grid(legend, bottom.plots, ncol = 1, rel_heights = c(0.2, 0.8))
+```
+
+\newpage
+
+```{r benchmark}
+
+# SESSION INFORMATION ##########################################################
+
+sessionInfo()
+
+## Return the machine CPU
+cat("Machine:     "); print(get_cpu()$model_name)
+
+## Return number of true cores
+cat("Num cores:   "); print(detectCores(logical = FALSE))
+
+## Return number of threads
+cat("Num threads: "); print(detectCores(logical = FALSE))
+
+###########################END SIMULATIONS#####################################
+################################################################################
 ```

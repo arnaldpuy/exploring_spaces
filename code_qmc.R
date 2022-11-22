@@ -3,7 +3,7 @@
 # PRELIMINARY ##################################################################
 
 # Function to read in all required packages in one go:
-loadPackages <- function(x) {
+load_packages <- function(x) {
   for(i in x) {
     if(!require(i, character.only = TRUE)) {
       install.packages(i, dependencies = TRUE)
@@ -30,7 +30,7 @@ theme_AP <- function() {
 }
 
 # Load the packages
-loadPackages(c("sensobol", "data.table", "tidyverse", "parallel",
+load_packages(c("sensobol", "data.table", "tidyverse", "parallel",
                "scales", "doParallel", "benchmarkme",
                "cowplot", "wesanderson", "logitnorm"))
 
@@ -168,8 +168,11 @@ N <- 2^10
 matrices <- "A"
 max.k <- 10 # maximum number of explored inputs
 
+# Define an increasing sample size --------------
+exponents <- 7:14
+sample.sizes <- 2^exponents
+
 # CREATE SAMPLE MATRIX ########################################################
-length(sample_distributions)
 
 # Creation of sample matrix ---------------------
 mat <- sobol_matrices(N = N, params = params, matrices = matrices)
@@ -182,10 +185,6 @@ mat[, "n"] <- floor(mat[, "n"] * (max.k - 1 + 1) + 1)
 
 # Constrain n as a function of k
 mat[, "n"] <- ifelse(mat[, "n"] > mat[, "k"], mat[, "k"], mat[, "n"])
-
-# Define an increasing sample size --------------
-exponents <- 7:15
-sample.sizes <- 2^exponents
 
 # Replicate the sample matrix for each sample size
 n.times <- length(sample.sizes)
@@ -259,29 +258,14 @@ dt.tmp <- split(dt, dt$model.runs) %>%
   .[, `:=` (model.runs.x = NULL, model.runs.y = NULL)] %>%
   .[, .(RMSE = sqrt(mean((y.highest - y)^2))), .(sample.size, sample.method)]
 
+# CHECK Nº SIMULATIONS WITH SUM S_I < 0 ########################################
+
+dt.largest.sample[, .(negative = sum.si < 0)] %>%
+  .[, .N, negative]
+
+
+hist(dt.largest.sample$mean.dimension, na.rm = TRUE)
 # PLOT #########################################################################
-
-# Plot distribution of functions based on sum S_i
-plot.histogram <- dt.largest.sample[sample.method == "QRN"] %>%
-  ggplot(., aes(sum.si)) +
-  geom_histogram(fill = "white", color = "black") +
-  theme_AP() +
-  labs(x = "$\\sum_{i=1}^{k} S_i$",  y = "Counts") +
-  theme(legend.position = c(0.35, 0.7))
-
-plot.histogram
-
-# Plot sum of S_i against k and colored by k_t
-plot.scatter <- dt.largest.sample[sample.method == "QRN"] %>%
-  ggplot(., aes(sum.si, kt, color = k)) +
-  geom_point(size = 0.7) +
-  scale_color_gradient(low = "red", high = "green",
-                       name = "$k$") +
-  theme_AP() +
-  theme(legend.position = "top") +
-  labs(x = "$\\sum_{i=1}^{k} S_i$", y = "$k_t$")
-
-plot.scatter
 
 plot.convergence <- dt.tmp %>%
   .[, sample.size:= as.numeric(sample.size)] %>%
@@ -293,7 +277,46 @@ plot.convergence <- dt.tmp %>%
   scale_color_discrete(name = "Sampling method") +
   theme(legend.position = c(0.7, 0.7))
 
-plot_grid(plot.convergence, plot.histogram, plot.scatter, ncol = 3, labels = "auto")
+plot.convergence
+
+# Plot distribution of functions based on sum S_i
+plot.histogram <- dt.largest.sample %>%
+  ggplot(., aes(sum.si)) +
+  geom_histogram(fill = "white", color = "black") +
+  theme_AP() +
+  scale_x_continuous(limits = c(0, 1)) +
+  labs(x = "$\\sum_{i=1}^{k} S_i$",  y = "Counts") +
+  theme(legend.position = c(0.35, 0.7))
+
+plot.histogram
+
+# Plot sum of S_i against k and colored by k_t
+plot.scatter <- dt.largest.sample %>%
+  ggplot(., aes(sum.si, kt, color = k)) +
+  geom_point(size = 0.7) +
+  scale_color_gradient(low = "red", high = "green",
+                       name = "$k$") +
+  theme_AP() +
+  scale_x_continuous(limits = c(0, 1)) +
+  theme(legend.position = "none") +
+  labs(x = "$\\sum_{i=1}^{k} S_i$", y = "$k_t$")
+
+legend <- get_legend(plot.scatter + theme(legend.position = "top"))
+
+plot.scatter
+
+plot.mean.dimensions <- dt.largest.sample %>%
+  ggplot(., aes(mean.dimension, sum.si)) +
+  geom_point(size = 0.6, alpha = 0.5) +
+  labs(x = "$\\sum_{i=1}^k T_i$", y = "$\\sum_{i=1}^k S_i$") +
+  theme_AP()
+
+plot.mean.dimensions
+
+bottom.plots <- plot_grid(plot.histogram, plot.scatter, plot.mean.dimensions,
+                          ncol = 3, labels = "auto")
+
+plot_grid(legend, bottom.plots, ncol = 1, rel_heights = c(0.2, 0.8))
 
 # SESSION INFORMATION ##########################################################
 
@@ -310,6 +333,13 @@ cat("Num threads: "); print(detectCores(logical = FALSE))
 
 ########################## END SIMULATIONS #####################################
 ################################################################################
+
+
+dt.largest.sample %>%
+  ggplot(., aes(mean.dimension, sum.si)) +
+  geom_point() +
+  theme_AP()
+
 
 
 

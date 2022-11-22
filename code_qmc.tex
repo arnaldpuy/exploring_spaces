@@ -211,8 +211,8 @@
 \CommentTok{\# Quantile function}
 \NormalTok{sample\_distributions }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(}
   
-  \StringTok{"uniform"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qunif}\NormalTok{(x, }\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{, }\DecValTok{1}\NormalTok{),}
-  \StringTok{"normal"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qnorm}\NormalTok{(x, }\DecValTok{0}\NormalTok{, }\FloatTok{0.3}\NormalTok{),}
+  \StringTok{"uniform"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) x,}
+  \StringTok{"normal"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qnorm}\NormalTok{(x, }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.15}\NormalTok{),}
   \StringTok{"beta"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qbeta}\NormalTok{(x, }\DecValTok{8}\NormalTok{, }\DecValTok{2}\NormalTok{),}
   \StringTok{"beta2"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qbeta}\NormalTok{(x, }\DecValTok{2}\NormalTok{, }\DecValTok{8}\NormalTok{),}
   \StringTok{"beta3"} \OtherTok{=} \ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{qbeta}\NormalTok{(x, }\DecValTok{2}\NormalTok{, }\FloatTok{0.8}\NormalTok{),}
@@ -313,7 +313,8 @@
 \NormalTok{\}}
 
 \CommentTok{\# Finalize metafunction {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
-\NormalTok{model\_fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(k, epsilon, phi, model.runs, n, type, matrices) \{}
+\NormalTok{model\_fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(k, epsilon, phi, model.runs, n, type, matrices, }
+\NormalTok{                      first, total) \{}
 
 \NormalTok{  params }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{(}\StringTok{"X"}\NormalTok{, }\DecValTok{1}\SpecialCharTok{:}\NormalTok{k, }\AttributeTok{sep =} \StringTok{""}\NormalTok{)}
   \FunctionTok{set.seed}\NormalTok{(epsilon)}
@@ -322,7 +323,7 @@
 \NormalTok{  mat }\OtherTok{\textless{}{-}} \FunctionTok{random\_distributions}\NormalTok{(}\AttributeTok{mat =}\NormalTok{ mat, }\AttributeTok{phi =}\NormalTok{ phi, }\AttributeTok{epsilon =}\NormalTok{ epsilon)}
 \NormalTok{  y }\OtherTok{\textless{}{-}} \FunctionTok{model}\NormalTok{(}\AttributeTok{data =}\NormalTok{ mat, }\AttributeTok{epsilon =}\NormalTok{ epsilon, }\AttributeTok{n =}\NormalTok{ n)}
 \NormalTok{  indices }\OtherTok{\textless{}{-}} \FunctionTok{sobol\_indices}\NormalTok{(}\AttributeTok{Y =}\NormalTok{ y, }\AttributeTok{N =}\NormalTok{ model.runs, }\AttributeTok{params =}\NormalTok{ params, }\AttributeTok{matrices =}\NormalTok{ matrices,}
-                           \AttributeTok{first =} \StringTok{"azzini"}\NormalTok{, }\AttributeTok{total =} \StringTok{"azzini"}\NormalTok{)}
+                           \AttributeTok{first =}\NormalTok{ first, }\AttributeTok{total =}\NormalTok{ total)}
 \NormalTok{  model.output }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{(y[}\DecValTok{1}\SpecialCharTok{:}\NormalTok{model.runs])}
 
 \NormalTok{  output }\OtherTok{\textless{}{-}} \FunctionTok{list}\NormalTok{(model.output, indices)}
@@ -333,8 +334,11 @@
 \end{Highlighting}
 \end{Shaded}
 
+\hypertarget{analysis}{%
+\section{Analysis}\label{analysis}}
+
 \hypertarget{settings}{%
-\section{Settings}\label{settings}}
+\subsection{Settings}\label{settings}}
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -344,6 +348,321 @@
 \NormalTok{N }\OtherTok{\textless{}{-}} \DecValTok{2}\SpecialCharTok{\^{}}\DecValTok{10}
 \NormalTok{matrices }\OtherTok{\textless{}{-}} \StringTok{"A"}
 \NormalTok{max.k }\OtherTok{\textless{}{-}} \DecValTok{10} \CommentTok{\# maximum number of explored inputs}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{sample-matrix}{%
+\subsection{Sample matrix}\label{sample-matrix}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# DEFINE SAMPLE MATRIX \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\CommentTok{\# Creation of sample matrix {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\NormalTok{mat }\OtherTok{\textless{}{-}} \FunctionTok{sobol\_matrices}\NormalTok{(}\AttributeTok{N =}\NormalTok{ N, }\AttributeTok{params =}\NormalTok{ params, }\AttributeTok{matrices =}\NormalTok{ matrices)}
+
+\CommentTok{\# Transformation to appropriate distributions {-}{-}{-}}
+\NormalTok{mat[, }\StringTok{"k"}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{floor}\NormalTok{(mat[, }\StringTok{"k"}\NormalTok{] }\SpecialCharTok{*}\NormalTok{ (max.k }\SpecialCharTok{{-}} \DecValTok{2} \SpecialCharTok{+} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \DecValTok{2}\NormalTok{)}
+\NormalTok{mat[, }\StringTok{"epsilon"}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{floor}\NormalTok{(mat[, }\StringTok{"epsilon"}\NormalTok{] }\SpecialCharTok{*}\NormalTok{ (N }\SpecialCharTok{{-}} \DecValTok{1} \SpecialCharTok{+} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}
+\NormalTok{mat[, }\StringTok{"phi"}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{floor}\NormalTok{(mat[, }\StringTok{"phi"}\NormalTok{] }\SpecialCharTok{*}\NormalTok{ ((}\FunctionTok{length}\NormalTok{(sample\_distributions) }\SpecialCharTok{+} \DecValTok{1}\NormalTok{) }\SpecialCharTok{{-}} \DecValTok{1} \SpecialCharTok{+} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}
+\NormalTok{mat[, }\StringTok{"n"}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{floor}\NormalTok{(mat[, }\StringTok{"n"}\NormalTok{] }\SpecialCharTok{*}\NormalTok{ (max.k }\SpecialCharTok{{-}} \DecValTok{1} \SpecialCharTok{+} \DecValTok{1}\NormalTok{) }\SpecialCharTok{+} \DecValTok{1}\NormalTok{)}
+
+\CommentTok{\# Constrain n as a function of k}
+\NormalTok{mat[, }\StringTok{"n"}\NormalTok{] }\OtherTok{\textless{}{-}} \FunctionTok{ifelse}\NormalTok{(mat[, }\StringTok{"n"}\NormalTok{] }\SpecialCharTok{\textgreater{}}\NormalTok{ mat[, }\StringTok{"k"}\NormalTok{], mat[, }\StringTok{"k"}\NormalTok{], mat[, }\StringTok{"n"}\NormalTok{])}
+
+\CommentTok{\# Define an increasing sample size {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\NormalTok{exponents }\OtherTok{\textless{}{-}} \DecValTok{7}\SpecialCharTok{:}\DecValTok{15}
+\NormalTok{sample.sizes }\OtherTok{\textless{}{-}} \DecValTok{2}\SpecialCharTok{\^{}}\NormalTok{exponents}
+
+\CommentTok{\# Replicate the sample matrix for each sample size}
+\NormalTok{n.times }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{(sample.sizes)}
+\NormalTok{mat }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{(}\FunctionTok{rep}\NormalTok{(}\FunctionTok{t}\NormalTok{(mat), n.times), }\AttributeTok{ncol =} \FunctionTok{ncol}\NormalTok{(mat), }\AttributeTok{byrow =} \ConstantTok{TRUE}\NormalTok{)}
+\NormalTok{model.runs }\OtherTok{\textless{}{-}} \FunctionTok{rep}\NormalTok{(sample.sizes, }\AttributeTok{each =}\NormalTok{ N)}
+
+\NormalTok{mat }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(mat, model.runs)}
+\FunctionTok{colnames}\NormalTok{(mat) }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(params, }\StringTok{"model.runs"}\NormalTok{)}
+\NormalTok{mat }\OtherTok{\textless{}{-}} \FunctionTok{data.table}\NormalTok{(mat)}
+\NormalTok{sampling.methods }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"R"}\NormalTok{, }\StringTok{"QRN"}\NormalTok{, }\StringTok{"LHS"}\NormalTok{)}
+
+\CommentTok{\# Replicate matrix for each sampling method {-}{-}{-}{-}{-}}
+\NormalTok{final.mat }\OtherTok{\textless{}{-}}\NormalTok{ mat[}\FunctionTok{rep}\NormalTok{(mat[, .I], }\FunctionTok{length}\NormalTok{(sampling.methods))]}
+\NormalTok{final.mat }\OtherTok{\textless{}{-}}\NormalTok{ final.mat[, sample.method}\SpecialCharTok{:}\ErrorTok{=} \FunctionTok{rep}\NormalTok{(sampling.methods, }\AttributeTok{each =}\NormalTok{ N }\SpecialCharTok{*}\NormalTok{ n.times)]}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{simulations}{%
+\subsection{Simulations}\label{simulations}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# RUN SIMULATIONS \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\CommentTok{\# Define parallel computing {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\NormalTok{matrices }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"A"}\NormalTok{, }\StringTok{"B"}\NormalTok{, }\StringTok{"AB"}\NormalTok{, }\StringTok{"BA"}\NormalTok{)}
+\NormalTok{n\_cores }\OtherTok{\textless{}{-}} \FunctionTok{detectCores}\NormalTok{() }\SpecialCharTok{*} \FloatTok{0.75}
+\NormalTok{cl }\OtherTok{\textless{}{-}} \FunctionTok{makeCluster}\NormalTok{(n\_cores)}
+\FunctionTok{registerDoParallel}\NormalTok{(cl)}
+
+\CommentTok{\# Compute {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\NormalTok{y }\OtherTok{\textless{}{-}} \FunctionTok{foreach}\NormalTok{(}\AttributeTok{i=}\DecValTok{1}\SpecialCharTok{:}\FunctionTok{nrow}\NormalTok{(final.mat),}
+             \AttributeTok{.packages =} \FunctionTok{c}\NormalTok{(}\StringTok{"Rfast"}\NormalTok{, }\StringTok{"sensobol"}\NormalTok{, }\StringTok{"dplyr"}\NormalTok{, }\StringTok{"RcppAlgos"}\NormalTok{,}
+                           \StringTok{"logitnorm"}\NormalTok{)) }\SpecialCharTok{\%dopar\%}
+\NormalTok{  \{}
+    \FunctionTok{model\_fun}\NormalTok{(}\AttributeTok{k =}\NormalTok{ final.mat[[i, }\StringTok{"k"}\NormalTok{]],}
+              \AttributeTok{epsilon =}\NormalTok{ final.mat[[i, }\StringTok{"epsilon"}\NormalTok{]],}
+              \AttributeTok{n =}\NormalTok{ final.mat[[i, }\StringTok{"n"}\NormalTok{]],}
+              \AttributeTok{phi =}\NormalTok{ final.mat[[i, }\StringTok{"phi"}\NormalTok{]],}
+              \AttributeTok{model.runs =}\NormalTok{ final.mat[[i, }\StringTok{"model.runs"}\NormalTok{]],}
+              \AttributeTok{type =}\NormalTok{ final.mat[[i, }\StringTok{"sample.method"}\NormalTok{]],}
+              \AttributeTok{matrices =}\NormalTok{ matrices, }
+              \AttributeTok{first =} \StringTok{"azzini"}\NormalTok{, }
+              \AttributeTok{total =} \StringTok{"azzini"}\NormalTok{)}
+\NormalTok{  \}}
+
+\CommentTok{\# Stop parallel cluster {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\FunctionTok{stopCluster}\NormalTok{(cl)}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{arrange-results}{%
+\subsection{Arrange results}\label{arrange-results}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# ARRANGE RESULTS \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\NormalTok{dt.output }\OtherTok{\textless{}{-}} \FunctionTok{do.call}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\FunctionTok{lapply}\NormalTok{(y, }\ControlFlowTok{function}\NormalTok{(x) x}\SpecialCharTok{$}\NormalTok{output))}
+\NormalTok{dt.indices }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(y, }\ControlFlowTok{function}\NormalTok{(x) x}\SpecialCharTok{$}\NormalTok{indices)}
+\NormalTok{sum.si }\OtherTok{\textless{}{-}} \FunctionTok{do.call}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\FunctionTok{lapply}\NormalTok{(dt.indices, }\ControlFlowTok{function}\NormalTok{(x) x}\SpecialCharTok{$}\NormalTok{si.sum))}
+\NormalTok{mean.dimension }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(dt.indices, }\ControlFlowTok{function}\NormalTok{(x) x}\SpecialCharTok{$}\NormalTok{results }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{                           .[sensitivity }\SpecialCharTok{==} \StringTok{"Ti"}\NormalTok{] }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{                           .[, }\FunctionTok{sum}\NormalTok{(original)]) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{do.call}\NormalTok{(}\StringTok{"c"}\NormalTok{, .)}
+\NormalTok{kt }\OtherTok{\textless{}{-}} \FunctionTok{lapply}\NormalTok{(dt.indices, }\ControlFlowTok{function}\NormalTok{(x) x}\SpecialCharTok{$}\NormalTok{results }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{               .[sensitivity }\SpecialCharTok{==} \StringTok{"Ti"}\NormalTok{] }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{               .[original }\SpecialCharTok{\textgreater{}} \FloatTok{0.05}\NormalTok{] }\SpecialCharTok{\%\textgreater{}\%}
+               \FunctionTok{nrow}\NormalTok{(.)) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{do.call}\NormalTok{(}\StringTok{"c"}\NormalTok{, .)}
+
+\NormalTok{dt.dimensions }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(final.mat, sum.si, kt, mean.dimension)}
+\NormalTok{dt.largest.sample }\OtherTok{\textless{}{-}}\NormalTok{ dt.dimensions[model.runs }\SpecialCharTok{==}\NormalTok{ sample.sizes[}\FunctionTok{length}\NormalTok{(sample.sizes)]]}
+\FunctionTok{fwrite}\NormalTok{(dt.largest.sample, }\StringTok{"dt.largest.sample.csv"}\NormalTok{)}
+
+\CommentTok{\# {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+
+\CommentTok{\# Merge output with sample matrix {-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+
+\NormalTok{dt }\OtherTok{\textless{}{-}} \FunctionTok{cbind}\NormalTok{(final.mat, dt.output)}
+\NormalTok{dt.benchmark }\OtherTok{\textless{}{-}}\NormalTok{ dt[model.runs }\SpecialCharTok{==}\NormalTok{ sample.sizes[}\FunctionTok{length}\NormalTok{(sample.sizes)]]}
+
+\NormalTok{dt.tmp }\OtherTok{\textless{}{-}} \FunctionTok{split}\NormalTok{(dt, dt}\SpecialCharTok{$}\NormalTok{model.runs) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{lapply}\NormalTok{(., }\ControlFlowTok{function}\NormalTok{(x) }\FunctionTok{merge}\NormalTok{(x, dt.benchmark, }\AttributeTok{by =} \FunctionTok{c}\NormalTok{(}\StringTok{"k"}\NormalTok{, }\StringTok{"epsilon"}\NormalTok{,}
+                                                      \StringTok{"sample.method"}\NormalTok{, }\StringTok{"n"}\NormalTok{))) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{rbindlist}\NormalTok{(., }\AttributeTok{idcol =} \StringTok{"sample.size"}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{setnames}\NormalTok{(., }\FunctionTok{c}\NormalTok{(}\StringTok{"dt.output.y"}\NormalTok{, }\StringTok{"dt.output.x"}\NormalTok{), }\FunctionTok{c}\NormalTok{(}\StringTok{"y"}\NormalTok{, }\StringTok{"y.highest"}\NormalTok{)) }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  .[, }\StringTok{\textasciigrave{}}\AttributeTok{:=}\StringTok{\textasciigrave{}}\NormalTok{ (}\AttributeTok{model.runs.x =} \ConstantTok{NULL}\NormalTok{, }\AttributeTok{model.runs.y =} \ConstantTok{NULL}\NormalTok{)] }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  .[, .(}\AttributeTok{RMSE =} \FunctionTok{sqrt}\NormalTok{(}\FunctionTok{mean}\NormalTok{((y.highest }\SpecialCharTok{{-}}\NormalTok{ y)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{))), .(sample.size, sample.method)]}
+
+\FunctionTok{fwrite}\NormalTok{(dt.tmp, }\StringTok{"dt.tmp.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dt.largest.sample[, .(}\AttributeTok{summary =}\NormalTok{ sum.si }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{)] }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  .[, .N, summary]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    summary    N
+## 1:   FALSE 3066
+## 2:      NA    6
+\end{verbatim}
+
+\hypertarget{figures}{%
+\subsection{Figures}\label{figures}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# PLOT \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\CommentTok{\# Plot distribution of functions based on sum S\_i}
+\NormalTok{plot.histogram }\OtherTok{\textless{}{-}}\NormalTok{ dt.largest.sample[sample.method }\SpecialCharTok{==} \StringTok{"QRN"}\NormalTok{] }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(., }\FunctionTok{aes}\NormalTok{(sum.si)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_histogram}\NormalTok{(}\AttributeTok{fill =} \StringTok{"white"}\NormalTok{, }\AttributeTok{color =} \StringTok{"black"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_AP}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{pretty\_breaks}\NormalTok{(}\AttributeTok{n =} \DecValTok{3}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"$}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{sum\_\{i=1\}\^{}\{k\} S\_i$"}\NormalTok{,  }\AttributeTok{y =} \StringTok{"Counts"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.35}\NormalTok{, }\FloatTok{0.7}\NormalTok{))}
+
+\NormalTok{plot.histogram}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{code_qmc_files/figure-latex/plot_results-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot sum of S\_i against k and colored by k\_t}
+\NormalTok{plot.scatter }\OtherTok{\textless{}{-}}\NormalTok{ dt.largest.sample[sample.method }\SpecialCharTok{==} \StringTok{"QRN"}\NormalTok{] }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(., }\FunctionTok{aes}\NormalTok{(sum.si, kt, }\AttributeTok{color =}\NormalTok{ k)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_point}\NormalTok{(}\AttributeTok{size =} \FloatTok{0.7}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_gradient}\NormalTok{(}\AttributeTok{low =} \StringTok{"red"}\NormalTok{, }\AttributeTok{high =} \StringTok{"green"}\NormalTok{,}
+                       \AttributeTok{name =} \StringTok{"$k$"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme\_AP}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \StringTok{"top"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_continuous}\NormalTok{(}\AttributeTok{breaks =} \FunctionTok{pretty\_breaks}\NormalTok{(}\AttributeTok{n =} \DecValTok{3}\NormalTok{)) }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"$}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{sum\_\{i=1\}\^{}\{k\} S\_i$"}\NormalTok{, }\AttributeTok{y =} \StringTok{"$k\_t$"}\NormalTok{)}
+
+\NormalTok{plot.scatter}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{code_qmc_files/figure-latex/plot_results-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{plot.convergence }\OtherTok{\textless{}{-}}\NormalTok{ dt.tmp }\SpecialCharTok{\%\textgreater{}\%}
+\NormalTok{  .[, sample.size}\SpecialCharTok{:}\ErrorTok{=} \FunctionTok{as.numeric}\NormalTok{(sample.size)] }\SpecialCharTok{\%\textgreater{}\%}
+  \FunctionTok{ggplot}\NormalTok{(., }\FunctionTok{aes}\NormalTok{(sample.size, RMSE, }\AttributeTok{color =}\NormalTok{ sample.method, }\AttributeTok{group =}\NormalTok{ sample.method)) }\SpecialCharTok{+}
+  \FunctionTok{geom\_line}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{scale\_x\_log10}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{theme\_AP}\NormalTok{() }\SpecialCharTok{+}
+  \FunctionTok{labs}\NormalTok{(}\AttributeTok{x =} \StringTok{"Nº of model runs"}\NormalTok{, }\AttributeTok{y =} \StringTok{"RMSE"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{scale\_color\_discrete}\NormalTok{(}\AttributeTok{name =} \StringTok{"Sampling method"}\NormalTok{) }\SpecialCharTok{+}
+  \FunctionTok{theme}\NormalTok{(}\AttributeTok{legend.position =} \FunctionTok{c}\NormalTok{(}\FloatTok{0.6}\NormalTok{, }\FloatTok{0.7}\NormalTok{))}
+
+\NormalTok{plot.convergence}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{code_qmc_files/figure-latex/plot_results-3.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# MERGE FIGURES \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\FunctionTok{plot\_grid}\NormalTok{(plot.convergence, plot.histogram, plot.scatter, }\AttributeTok{ncol =} \DecValTok{3}\NormalTok{, }\AttributeTok{labels =} \StringTok{"auto"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+\end{verbatim}
+
+\includegraphics{code_qmc_files/figure-latex/merge_plots-1.pdf}
+
+\newpage
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# SESSION INFORMATION \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+
+\FunctionTok{sessionInfo}\NormalTok{()}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## R version 4.2.1 (2022-06-23)
+## Platform: aarch64-apple-darwin20 (64-bit)
+## Running under: macOS Monterey 12.6
+## 
+## Matrix products: default
+## BLAS:   /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRblas.0.dylib
+## LAPACK: /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/lib/libRlapack.dylib
+## 
+## locale:
+## [1] en_US.UTF-8/en_US.UTF-8/en_US.UTF-8/C/en_US.UTF-8/en_US.UTF-8
+## 
+## attached base packages:
+## [1] parallel  stats     graphics  grDevices utils     datasets  methods  
+## [8] base     
+## 
+## other attached packages:
+##  [1] checkpoint_1.0.2  logitnorm_0.8.38  wesanderson_0.3.6 cowplot_1.1.1    
+##  [5] benchmarkme_1.0.8 doParallel_1.0.17 iterators_1.0.14  foreach_1.5.2    
+##  [9] scales_1.2.1      forcats_0.5.2     stringr_1.4.1     dplyr_1.0.10     
+## [13] purrr_0.3.5       readr_2.1.3       tidyr_1.2.1       tibble_3.1.8     
+## [17] ggplot2_3.4.0     tidyverse_1.3.2   data.table_1.14.6 sensobol_1.1.2   
+## 
+## loaded via a namespace (and not attached):
+##  [1] httr_1.4.4            jsonlite_1.8.3        modelr_0.1.10        
+##  [4] Rdpack_2.4            assertthat_0.2.1      tikzDevice_0.12.3.1  
+##  [7] googlesheets4_1.0.1   cellranger_1.1.0      yaml_2.3.6           
+## [10] pillar_1.8.1          backports_1.4.1       lattice_0.20-45      
+## [13] glue_1.6.2            digest_0.6.30         rbibutils_2.2.10     
+## [16] rvest_1.0.3           colorspace_2.0-3      htmltools_0.5.3      
+## [19] Matrix_1.5-3          pkgconfig_2.0.3       broom_1.0.1          
+## [22] haven_2.5.1           tzdb_0.3.0            timechange_0.1.1     
+## [25] googledrive_2.0.0     generics_0.1.3        ellipsis_0.3.2       
+## [28] withr_2.5.0           cli_3.4.1             magrittr_2.0.3       
+## [31] crayon_1.5.2          readxl_1.4.1          evaluate_0.18        
+## [34] fs_1.5.2              fansi_1.0.3           xml2_1.3.3           
+## [37] tools_4.2.1           hms_1.1.2             gargle_1.2.1         
+## [40] lifecycle_1.0.3       munsell_0.5.0         reprex_2.0.2         
+## [43] compiler_4.2.1        rlang_1.0.6           grid_4.2.1           
+## [46] rstudioapi_0.14       filehash_2.4-3        rmarkdown_2.18       
+## [49] gtable_0.3.1          codetools_0.2-18      DBI_1.1.3            
+## [52] benchmarkmeData_1.0.4 R6_2.5.1              lubridate_1.9.0      
+## [55] knitr_1.41            fastmap_1.1.0         utf8_1.2.2           
+## [58] stringi_1.7.8         Rcpp_1.0.9.5          vctrs_0.5.1          
+## [61] dbplyr_2.2.1          tidyselect_1.2.0      xfun_0.35
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Return the machine CPU}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Machine:     "}\NormalTok{); }\FunctionTok{print}\NormalTok{(}\FunctionTok{get\_cpu}\NormalTok{()}\SpecialCharTok{$}\NormalTok{model\_name)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Machine:
+\end{verbatim}
+
+\begin{verbatim}
+## [1] "Apple M1 Max"
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Return number of true cores}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Num cores:   "}\NormalTok{); }\FunctionTok{print}\NormalTok{(}\FunctionTok{detectCores}\NormalTok{(}\AttributeTok{logical =} \ConstantTok{FALSE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Num cores:
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 10
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\# Return number of threads}
+\FunctionTok{cat}\NormalTok{(}\StringTok{"Num threads: "}\NormalTok{); }\FunctionTok{print}\NormalTok{(}\FunctionTok{detectCores}\NormalTok{(}\AttributeTok{logical =} \ConstantTok{FALSE}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Num threads:
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 10
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DocumentationTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}\RegionMarkerTok{END}\DocumentationTok{ SIMULATIONS\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
+\DocumentationTok{\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#}
 \end{Highlighting}
 \end{Shaded}
 
